@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nexus Ops — Enterprise SaaS Dashboard Demo & Starter
 
-## Getting Started
+A production-quality **Business Operations Platform** demo that doubles as a reusable SaaS
+starter template. Built to show how modern business software _should_ be built —
+**security-first, accessible, observable, and production-ready** — not just how it can look.
 
-First, run the development server:
+> **Demo mode:** data is seeded in memory and authentication is simulated. Sign in as Admin,
+> Manager, User, or Viewer with password `password`. Never enter real credentials.
+
+## Highlights
+
+- 🔐 **Security-first** — 3-layer RBAC (route + page + service), signed HttpOnly session,
+  input validation (shared Zod), output encoding, CSP + security headers, audit trail.
+- ♿ **Accessible** — WCAG AA target: keyboard nav, focus management, ARIA, reduced motion;
+  automated jest-axe + Playwright checks.
+- 📈 **Real dashboards** — KPIs, revenue/user/channel charts (Recharts), activity, alerts.
+- 🗂️ **Enterprise data tables** — sort, filter, search, paginate, bulk actions, column
+  visibility, CSV export (with formula-injection protection).
+- 🧱 **Clean architecture** — UI → hooks → clients → route handlers → services → repositories.
+  Swap the mock backend for a real one by changing **two layers**.
+- 🔭 **Observable** — structured logging, metrics, tracing spans, health checks.
+- 🎨 **Re-skinnable** — `/showcase` re-themes the starter into 8 verticals.
+
+## Tech stack
+
+Next.js 16 (App Router · RSC · Turbopack) · React 19 · TypeScript (strict) · Tailwind CSS v4 ·
+shadcn/Radix UI · Zustand · TanStack Query · React Hook Form + Zod · Recharts · Jest + RTL +
+jest-axe · Playwright · ESLint + Prettier + Husky.
+
+Every dependency and design source was security- and license-reviewed before use — see
+[`docs/security-review.md`](docs/security-review.md) and
+[`docs/design-research.md`](docs/design-research.md).
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `/login` and use **Quick demo sign-in**. Full instructions:
+[`docs/setup.md`](docs/setup.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`dev` · `build` · `start` · `lint` · `format` · `typecheck` · `test` · `coverage` · `e2e` ·
+`audit` (see [`docs/setup.md`](docs/setup.md)).
 
-## Learn More
+## Project structure (top level)
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/        (auth) & (app) route groups, api/ route handlers, landing, layout
+src/components/ ui kit, layout, data-table, charts, feature components, auth, forms, shared
+src/hooks/      TanStack Query hooks
+src/lib/        api (repos/clients/services), auth, rbac, audit, observability, validation, mock
+src/proxy.ts    route guard (Next 16 "middleware")
+docs/           full documentation set
+e2e/            Playwright specs
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Status
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
+- ✅ 45 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
+- Core-logic coverage ≈ 84% statements / 82% branches
 
-## Deploy on Vercel
+See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Doc                                                                                                                                    |                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| [Discovery](docs/discovery.md)                                                                                                         | Vision, personas, roadmap, risks |
+| [Architecture](docs/architecture.md)                                                                                                   | Layered design & data flow       |
+| [Design system](docs/design-system.md)                                                                                                 | Tokens, components, patterns     |
+| [Design research](docs/design-research.md)                                                                                             | Vetted design sources            |
+| [Security model](docs/security-model.md)                                                                                               | Trust boundaries & STRIDE        |
+| [Security implementation](docs/security-implementation.md)                                                                             | Concrete controls                |
+| [Security review](docs/security-review.md)                                                                                             | Dependency vetting               |
+| [Security audit](docs/security-audit.md)                                                                                               | Findings & risk score            |
+| [RBAC](docs/rbac.md)                                                                                                                   | Roles, matrix, enforcement       |
+| [Observability](docs/observability.md)                                                                                                 | Logs, metrics, tracing, health   |
+| [Testing](docs/testing.md)                                                                                                             | Strategy & how to run            |
+| [Accessibility](docs/accessibility.md)                                                                                                 | WCAG AA approach                 |
+| [Performance](docs/performance.md)                                                                                                     | Budgets & techniques             |
+| [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Customization](docs/customization.md) · [Roadmap](docs/future-roadmap.md) | Operate & extend                 |
+
+## License & disclaimer
+
+Demonstration/starter project. Authentication and data are simulated — **not** production
+security. Review [`docs/security-model.md`](docs/security-model.md) before adapting for
+production.
