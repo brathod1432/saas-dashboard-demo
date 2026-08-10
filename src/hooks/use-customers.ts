@@ -54,3 +54,44 @@ export function useDeleteCustomer() {
     onError: (error: Error) => toast.error(error.message),
   });
 }
+
+/** Bulk delete/update — one request per row, a single toast, one invalidation. */
+export function useBulkDeleteCustomers() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) =>
+      Promise.all(ids.map((id) => httpClient.del<{ id: string }>(`/customers/${id}`))),
+    onSuccess: (_res, ids) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Deleted ${ids.length} customer${ids.length === 1 ? "" : "s"}`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useBulkUpdateCustomers() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ ids, patch }: { ids: string[]; patch: Partial<Customer> }) =>
+      Promise.all(ids.map((id) => httpClient.patch<Customer>(`/customers/${id}`, patch))),
+    onSuccess: (_res, { ids }) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Updated ${ids.length} customer${ids.length === 1 ? "" : "s"}`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+/** Import many customers (validated client-side before POSTing each row). */
+export function useImportCustomers() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (inputs: CustomerCreateInput[]) =>
+      Promise.all(inputs.map((input) => httpClient.post<Customer>("/customers", input))),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Imported ${res.length} customer${res.length === 1 ? "" : "s"}`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}

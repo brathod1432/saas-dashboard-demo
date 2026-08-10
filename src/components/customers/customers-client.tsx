@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { MoreHorizontal, Plus, Eye, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Plus, Eye, Pencil, Trash2, Upload } from "lucide-react";
 import type { Customer } from "@/lib/types";
 import { useCustomers, useDeleteCustomer } from "@/hooks/use-customers";
 import { DataTable, type Column } from "@/components/data-table/data-table";
@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Can, useCan } from "@/components/auth/can";
 import { CustomerFormDialog } from "./customer-form-dialog";
+import { CustomerBulkBar } from "./customer-bulk-bar";
+import { ImportCustomersDialog } from "./import-customers-dialog";
 import { findUserById } from "@/lib/auth/users";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -178,6 +180,14 @@ export function CustomersClient() {
         description="Manage accounts, health, and revenue relationships."
         actions={
           <Can permission="customers:create">
+            <ImportCustomersDialog
+              trigger={
+                <Button variant="outline">
+                  <Upload className="h-4 w-4" />
+                  Import
+                </Button>
+              }
+            />
             <CustomerFormDialog
               mode="create"
               openSignal={params.get("new") === "1"}
@@ -207,10 +217,8 @@ export function CustomersClient() {
           statusOf={(c) => c.status}
           exportFileName="customers"
           onRowClick={(c) => router.push(`/customers/${c.id}`)}
-          bulkActions={(selected) => (
-            <span className="text-muted-foreground text-xs">
-              {formatCurrency(selected.reduce((sum, c) => sum + c.mrr, 0))} combined MRR
-            </span>
+          bulkActions={(selected, clear) => (
+            <CustomerBulkBar selected={selected} clear={clear} />
           )}
         />
       )}

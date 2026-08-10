@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { requirePermission } from "@/lib/auth/server";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { projectsRepository } from "@/lib/api/repositories/projects";
 import { customersRepository } from "@/lib/api/repositories/customers";
 import { findUserById } from "@/lib/auth/users";
@@ -38,12 +38,9 @@ export default async function ProjectDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/projects"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to projects
-      </Link>
+      <Breadcrumbs
+        items={[{ label: "Projects", href: "/projects" }, { label: project.name }]}
+      />
 
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">{project.name}</h1>

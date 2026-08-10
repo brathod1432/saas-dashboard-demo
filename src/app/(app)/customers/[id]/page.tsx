@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { requirePermission } from "@/lib/auth/server";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { customersRepository } from "@/lib/api/repositories/customers";
 import { projectsRepository } from "@/lib/api/repositories/projects";
 import { invoicesRepository } from "@/lib/api/repositories/invoices";
@@ -53,12 +54,9 @@ export default async function CustomerDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/customers"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
-      >
-        <ArrowLeft className="h-4 w-4" /> Back to customers
-      </Link>
+      <Breadcrumbs
+        items={[{ label: "Customers", href: "/customers" }, { label: customer.name }]}
+      />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">

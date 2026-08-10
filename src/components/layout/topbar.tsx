@@ -1,11 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell, LogOut, Menu, Search } from "lucide-react";
+import { LogOut, Menu, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationsMenu } from "./notifications-menu";
 import { useCurrentUser } from "@/components/auth/session-context";
 import { useUiStore } from "@/stores/ui-store";
 import { getInitials } from "@/lib/utils";
@@ -60,34 +60,7 @@ export function Topbar({ alerts }: { alerts: Alert[] }) {
       <div className="ml-auto flex items-center gap-1">
         <ThemeToggle />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-              {alerts.length > 0 && (
-                <span className="bg-destructive absolute top-1.5 right-1.5 h-2 w-2 rounded-full" />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel className="flex items-center justify-between">
-              Notifications
-              <Badge variant="secondary">{alerts.length}</Badge>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {alerts.slice(0, 4).map((alert) => (
-              <DropdownMenuItem key={alert.id} className="flex-col items-start gap-0.5">
-                <span className="text-sm font-medium">{alert.title}</span>
-                <span className="text-muted-foreground text-xs">{alert.description}</span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NotificationsMenu alerts={alerts} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Can, useCan } from "@/components/auth/can";
 import { ProjectFormDialog } from "./project-form-dialog";
+import { ProjectBulkBar } from "./project-bulk-bar";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const STATUS_OPTIONS = [
@@ -191,11 +192,8 @@ export function ProjectsClient() {
           statusOf={(p) => p.status}
           exportFileName="projects"
           onRowClick={(p) => router.push(`/projects/${p.id}`)}
-          bulkActions={(selected) => (
-            <span className="text-muted-foreground text-xs">
-              {formatCurrency(selected.reduce((sum, p) => sum + p.budget, 0))} combined
-              budget
-            </span>
+          bulkActions={(selected, clear) => (
+            <ProjectBulkBar selected={selected} clear={clear} />
           )}
         />
       )}

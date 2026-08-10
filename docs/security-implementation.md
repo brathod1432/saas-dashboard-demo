@@ -73,11 +73,19 @@ Applied to every response via `headers()`:
 - **Production note:** the store is in-process (demo). Back it with Redis/Upstash (or an edge
   limiter in `proxy.ts`) so limits hold across instances, and add a `Retry-After` header.
 
+## Response caching
+
+- Every API response goes through `handle()` (`src/lib/api/route-helpers.ts`), which sets
+  **`Cache-Control: no-store, no-cache, must-revalidate`** so user-specific data is never cached
+  by browsers, the back/forward cache, or intermediary proxies/CDNs.
+
 ## Secrets management
 
 - Only `SESSION_SECRET` (server-only, never `NEXT_PUBLIC_`) — see `.env.example`.
 - `.env*` is git-ignored; no secrets are committed. Public config uses the `NEXT_PUBLIC_` prefix
   intentionally.
+- **Startup guard:** `src/lib/auth/session.ts` warns loudly if the app boots in production with
+  the insecure default `SESSION_SECRET`.
 - In production, source `SESSION_SECRET` from a secrets manager and rotate periodically.
 
 ## Audit trail

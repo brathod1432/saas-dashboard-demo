@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { requirePermission } from "@/lib/auth/server";
 import { analyticsRepository } from "@/lib/api/repositories/analytics";
@@ -11,14 +12,22 @@ import {
 } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 import { RevenueChart, UsersBarChart } from "@/components/charts/charts";
+import { PeriodSelector } from "@/components/reports/period-selector";
 import { formatCurrency } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Reports" };
 
-export default async function ReportsPage() {
+export default async function ReportsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ period?: string }>;
+}) {
   await requirePermission("reports:view");
-  const revenue = analyticsRepository.revenueSeries();
-  const users = analyticsRepository.userGrowthSeries();
+  const { period } = await searchParams;
+  const months = [3, 6, 12].includes(Number(period)) ? Number(period) : 12;
+
+  const revenue = analyticsRepository.revenueSeries().slice(-months);
+  const users = analyticsRepository.userGrowthSeries().slice(-months);
   const summary = analyticsRepository.summary();
   const topCustomers = [...customersRepository.all()]
     .sort((a, b) => b.mrr - a.mrr)
@@ -28,7 +37,12 @@ export default async function ReportsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Reports"
-        description="Revenue, users, and account performance over the last year."
+        description={`Revenue, users, and account performance over the last ${months} months.`}
+        actions={
+          <Suspense fallback={null}>
+            <PeriodSelector />
+          </Suspense>
+        }
       />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

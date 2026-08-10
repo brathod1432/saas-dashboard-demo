@@ -23,7 +23,16 @@ export interface Session {
 export const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "nexus.session";
 
 const SESSION_MAX_AGE = Number(process.env.SESSION_MAX_AGE ?? 86_400); // seconds
-const SECRET = process.env.SESSION_SECRET ?? "dev-only-insecure-secret-change-me";
+const INSECURE_DEFAULT_SECRET = "dev-only-insecure-secret-change-me";
+const SECRET = process.env.SESSION_SECRET ?? INSECURE_DEFAULT_SECRET;
+
+// Fail loud (but don't crash the build) if a production deploy ships the demo secret.
+if (process.env.NODE_ENV === "production" && SECRET === INSECURE_DEFAULT_SECRET) {
+  console.warn(
+    "[security] SESSION_SECRET is using the insecure default in production. " +
+      "Set a strong SESSION_SECRET (e.g. `openssl rand -base64 32`)."
+  );
+}
 
 export const sessionCookieOptions = {
   httpOnly: true,

@@ -57,14 +57,20 @@ export function toErrorResponse(error: unknown): NextResponse {
   return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 }
 
-/** Wrap a route handler with metrics + centralized error handling. */
-export function handle(
+/** Wrap a route handler with metrics, centralized errors, and no-store caching. */
+export async function handle(
   name: string,
   fn: () => Promise<NextResponse>
 ): Promise<NextResponse> {
   metrics.increment("http.request", { route: name });
-  return fn().catch((error) => {
+  let response: NextResponse;
+  try {
+    response = await fn();
+  } catch (error) {
     metrics.increment("http.error", { route: name });
-    return toErrorResponse(error);
-  });
+    response = toErrorResponse(error);
+  }
+  // API responses are user-specific — never cache them at any layer.
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  return response;
 }

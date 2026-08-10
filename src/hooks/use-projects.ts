@@ -53,3 +53,29 @@ export function useDeleteProject() {
     onError: (error: Error) => toast.error(error.message),
   });
 }
+
+export function useBulkDeleteProjects() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) =>
+      Promise.all(ids.map((id) => httpClient.del<{ id: string }>(`/projects/${id}`))),
+    onSuccess: (_res, ids) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Deleted ${ids.length} project${ids.length === 1 ? "" : "s"}`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useBulkUpdateProjects() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ ids, patch }: { ids: string[]; patch: Partial<Project> }) =>
+      Promise.all(ids.map((id) => httpClient.patch<Project>(`/projects/${id}`, patch))),
+    onSuccess: (_res, { ids }) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Updated ${ids.length} project${ids.length === 1 ? "" : "s"}`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
