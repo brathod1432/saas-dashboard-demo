@@ -8,7 +8,7 @@ import {
 } from "@/lib/auth/session";
 import { LoginSchema } from "@/lib/validation/schemas";
 import { recordAudit } from "@/lib/audit";
-import { ApiError, Errors } from "@/lib/api/errors";
+import { Errors } from "@/lib/api/errors";
 import { handle } from "@/lib/api/route-helpers";
 import { assertSameOrigin } from "@/lib/security/origin";
 import { loginRateLimiter } from "@/lib/security/rate-limit";
@@ -37,10 +37,10 @@ export async function POST(request: NextRequest) {
         ip,
         severity: "warning",
       });
-      throw new ApiError(
-        429,
-        "Too many attempts. Please try again later.",
-        "rate_limited"
+      const retryAfter = gate.retryAfterSeconds ?? 900;
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } }
       );
     }
 

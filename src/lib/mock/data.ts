@@ -1,6 +1,7 @@
 import type {
   Activity,
   Alert,
+  AppSettings,
   AuditLogEntry,
   Customer,
   CustomerStatus,
@@ -386,6 +387,14 @@ const invoices = makeInvoices(customers);
 const activities = makeActivities(customers, projects);
 const auditLog = makeAuditLog();
 
+const settings: AppSettings = {
+  organizationName: "Nexus Ops",
+  timezone: "UTC",
+  weeklyDigest: true,
+  securityAlerts: true,
+  twoFactor: false,
+};
+
 export const db = {
   users: DEMO_USERS,
   customers,
@@ -398,6 +407,7 @@ export const db = {
   revenueSeries,
   userGrowthSeries,
   channelSeries,
+  settings,
 };
 
 export type MockDb = typeof db;

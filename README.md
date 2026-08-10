@@ -24,6 +24,8 @@ starter template. Built to show how modern business software _should_ be built �
 - ⌘ **Command palette (⌘K)** — global search across customers, projects, and invoices.
 - 👥 **User & team management** — admins assign roles from `/users` (audited, self-lockout &
   last-admin guards); demo data **persists across restarts** (`.data/db.json`).
+- 🧾 **Exportable audit log** — dedicated `/audit` page with search, severity filter, and CSV
+  export; **Account & Settings changes actually persist** (and are audited).
 - 🧱 **Clean architecture** — UI → hooks → clients → route handlers → services → repositories.
   Swap the mock backend for a real one by changing **two layers**.
 - 🔭 **Observable** — structured logging, metrics, tracing spans, health checks.
@@ -57,7 +59,10 @@ starter template. Built to show how modern business software _should_ be built �
   </tr>
   <tr>
     <td><strong>Users &amp; team (role management)</strong><br/><img src="docs/screenshots/13-users.png" alt="Users & team" /></td>
-    <td><strong>Settings — RBAC permission matrix</strong><br/><img src="docs/screenshots/11-settings-rbac.png" alt="Settings / RBAC" /></td>
+    <td><strong>Audit log (filter &amp; CSV export)</strong><br/><img src="docs/screenshots/14-audit.png" alt="Audit log" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Settings — RBAC permission matrix</strong><br/><img src="docs/screenshots/11-settings-rbac.png" alt="Settings / RBAC" /></td>
   </tr>
   <tr>
     <td colspan="2"><strong>Portfolio showcase (re-skins)</strong><br/><img src="docs/screenshots/12-showcase.png" alt="Showcase" /></td>
@@ -107,7 +112,7 @@ e2e/            Playwright specs
 ## Status
 
 - ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
-- ✅ 65 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
+- ✅ 71 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
 - Core-logic coverage ≈ 87% statements / 79% branches
 
 See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).

@@ -127,6 +127,15 @@ export interface TimeSeriesPoint {
   [series: string]: string | number;
 }
 
+/** Organization/workspace settings (Settings page). */
+export interface AppSettings {
+  organizationName: string;
+  timezone: string;
+  weeklyDigest: boolean;
+  securityAlerts: boolean;
+  twoFactor: boolean;
+}
+
 /** Generic paginated result returned by the API layer. */
 export interface Paginated<T> {
   data: T[];

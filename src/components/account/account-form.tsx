@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import type { User } from "@/lib/types";
 import { ProfileUpdateSchema, type ProfileUpdateInput } from "@/lib/validation/schemas";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Field, SubmitButton } from "@/components/forms/field";
-import { delay } from "@/lib/utils";
+import { useUpdateProfile } from "@/hooks/use-account";
 
 export function AccountForm({ user }: { user: User }) {
-  const [saving, setSaving] = useState(false);
+  const updateProfile = useUpdateProfile();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isDirty },
   } = useForm<ProfileUpdateInput>({
     resolver: zodResolver(ProfileUpdateSchema),
@@ -26,11 +25,9 @@ export function AccountForm({ user }: { user: User }) {
     },
   });
 
-  async function onSubmit() {
-    setSaving(true);
-    await delay(600);
-    setSaving(false);
-    toast.success("Profile updated");
+  async function onSubmit(values: ProfileUpdateInput) {
+    await updateProfile.mutateAsync(values);
+    reset(values); // keep the form "clean" with the saved values
   }
 
   return (
@@ -54,7 +51,7 @@ export function AccountForm({ user }: { user: User }) {
               {(props) => <Input {...props} {...register("department")} />}
             </Field>
           </div>
-          <SubmitButton loading={saving} disabled={!isDirty && !saving}>
+          <SubmitButton loading={updateProfile.isPending} disabled={!isDirty}>
             Save profile
           </SubmitButton>
         </form>

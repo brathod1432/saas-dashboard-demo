@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import type { AuditLogEntry } from "@/lib/types";
+import type { AppSettings, AuditLogEntry } from "@/lib/types";
 import { SettingsSchema, type SettingsInput } from "@/lib/validation/schemas";
+import { useUpdateSettings } from "@/hooks/use-settings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -28,7 +27,6 @@ import { Field, SubmitButton } from "@/components/forms/field";
 import { PermissionMatrix } from "@/components/rbac/permission-matrix";
 import { AuditTable } from "@/components/audit/audit-table";
 import { Can } from "@/components/auth/can";
-import { delay } from "@/lib/utils";
 
 const TIMEZONES = [
   "UTC",
@@ -62,29 +60,30 @@ function ToggleRow({
   );
 }
 
-export function SettingsClient({ audit }: { audit: AuditLogEntry[] }) {
-  const [saving, setSaving] = useState(false);
+export function SettingsClient({
+  audit,
+  settings,
+  canEdit,
+}: {
+  audit: AuditLogEntry[];
+  settings: AppSettings;
+  canEdit: boolean;
+}) {
+  const updateSettings = useUpdateSettings();
   const {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isDirty },
   } = useForm<SettingsInput>({
     resolver: zodResolver(SettingsSchema),
-    defaultValues: {
-      organizationName: "Nexus Ops",
-      timezone: "UTC",
-      weeklyDigest: true,
-      securityAlerts: true,
-      twoFactor: false,
-    },
+    defaultValues: settings,
   });
 
-  async function onSubmit() {
-    setSaving(true);
-    await delay(600);
-    setSaving(false);
-    toast.success("Settings saved");
+  async function onSubmit(values: SettingsInput) {
+    await updateSettings.mutateAsync(values);
+    reset(values);
   }
 
   return (
@@ -183,11 +182,17 @@ export function SettingsClient({ audit }: { audit: AuditLogEntry[] }) {
           </Card>
         </TabsContent>
 
-        <div className="mt-4">
-          <SubmitButton loading={saving} disabled={!isDirty && !saving}>
-            Save changes
-          </SubmitButton>
-        </div>
+        {canEdit ? (
+          <div className="mt-4">
+            <SubmitButton loading={updateSettings.isPending} disabled={!isDirty}>
+              Save changes
+            </SubmitButton>
+          </div>
+        ) : (
+          <p className="text-muted-foreground mt-4 text-xs">
+            You have read-only access to settings.
+          </p>
+        )}
       </form>
 
       <TabsContent value="access" className="space-y-4">

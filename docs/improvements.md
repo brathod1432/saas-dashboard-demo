@@ -38,14 +38,16 @@ the global **search box didn't work**; data **reset on refresh**; and there were
 
 ## 2. Trust, correctness & polish
 
-| #   | Improvement                                                             | Why                                                  | Status         |
-| --- | ----------------------------------------------------------------------- | ---------------------------------------------------- | -------------- |
-| T1  | **Empty/error/loading states everywhere** (already strong) + wired CTAs | Users never hit dead ends                            | ✅ (extended)  |
-| T2  | **Optimistic updates + rollback** on mutations                          | Snappy feel; correct on failure                      | Roadmap        |
-| T3  | **Consistent confirmations for destructive actions**                    | Prevent accidental data loss                         | ✅ Implemented |
-| T4  | **Breadcrumbs on detail pages**                                         | Orientation in deep navigation                       | ✅ Implemented |
-| T5  | **Real notification center** (mark read, dismiss)                       | Current bell is static                               | ✅ Implemented |
-| T6  | **i18n / currency & timezone awareness**                                | Global teams; you already store timezone in settings | Roadmap        |
+| #   | Improvement                                                             | Why                                                     | Status                                     |
+| --- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------ |
+| T1  | **Empty/error/loading states everywhere** (already strong) + wired CTAs | Users never hit dead ends                               | ✅ (extended)                              |
+| T2  | **Optimistic updates + rollback** on mutations                          | Snappy feel; correct on failure                         | Roadmap                                    |
+| T3  | **Consistent confirmations for destructive actions**                    | Prevent accidental data loss                            | ✅ Implemented                             |
+| T4  | **Breadcrumbs on detail pages**                                         | Orientation in deep navigation                          | ✅ Implemented                             |
+| T5  | **Real notification center** (mark read, dismiss)                       | Current bell is static                                  | ✅ Implemented                             |
+| T6  | **i18n / currency & timezone awareness**                                | Global teams; you already store timezone in settings    | Roadmap                                    |
+| T7  | **Account & Settings forms actually persist** (were simulated)          | A form that silently no-ops erodes trust                | ✅ Implemented (audited, survives restart) |
+| T8  | **Dedicated Audit Log page** (search, severity filter, CSV export)      | Security/compliance teams need a real, exportable trail | ✅ Implemented (`/audit`, `audit:view`)    |
 
 ## 3. Security improvements (dedicated)
 
@@ -64,6 +66,8 @@ the global **search box didn't work**; data **reset on refresh**; and there were
 | S10 | **Security headers + `poweredByHeader:false`**                                             | Clickjacking, sniffing, info leak        | ✅ Already present                                                                          |
 | S11 | **`Cache-Control: no-store` on authenticated API responses**                               | Sensitive data cached by proxies/BFCache | ✅ Implemented (via `handle()`)                                                             |
 | S12 | **Production guard for default `SESSION_SECRET`**                                          | Shipping the demo signing key            | ✅ Implemented (startup warning)                                                            |
+| S13 | **`Retry-After` header on rate-limited (429) logins**                                      | Well-behaved back-off / client guidance  | ✅ Implemented                                                                              |
+| S14 | **Exportable audit trail UI** (`/audit`, RBAC-gated)                                       | Compliance/forensics visibility          | ✅ Implemented                                                                              |
 
 ## 4. Developer & adopter experience (client/consultant using the starter)
 
@@ -82,8 +86,10 @@ the global **search box didn't work**; data **reset on refresh**; and there were
 - **Iteration 1:** U1, U2, U3, U5, T1, T3, S1, S2, S3, S4, S5, S8, D1–D5.
 - **Iteration 2:** U6 (bulk mutations), U9 (reports period), U10 (CSV import),
   T4 (breadcrumbs), T5 (notification center), S11 (no-store), S12 (secret guard).
-- **Iteration 3 (this round):** U4 (persistence across restarts), U11 (user management UI),
+- **Iteration 3:** U4 (persistence across restarts), U11 (user management UI),
   S6 (env-aware CSP: drop `unsafe-eval` in prod).
+- **Iteration 4 (this round):** T7 (Account & Settings persist for real), T8/S14 (dedicated
+  Audit Log page with filter + CSV export), S13 (`Retry-After` on 429).
 - **Next (biggest remaining lift):** real database (replace file store), U8 (server-side tables),
   S6b (full nonce CSP), S7 (real auth/MFA), U7 (saved views), T2 (optimistic updates),
   i18n, Storybook, Lighthouse/axe CI.

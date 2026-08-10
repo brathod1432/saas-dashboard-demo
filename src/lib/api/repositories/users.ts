@@ -19,6 +19,14 @@ export const usersRepository = {
     return user;
   },
 
+  update(id: string, patch: Partial<User>): User | undefined {
+    const user = db.users.find((u) => u.id === id);
+    if (!user) return undefined;
+    Object.assign(user, patch);
+    persist();
+    return user;
+  },
+
   countByRole(role: Role): number {
     return db.users.filter((u) => u.role === role).length;
   },

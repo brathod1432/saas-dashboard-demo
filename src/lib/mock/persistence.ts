@@ -20,7 +20,7 @@ const DATA_FILE = `${DATA_DIR}/db.json`;
 
 type Persisted = Pick<
   typeof db,
-  "users" | "customers" | "projects" | "invoices" | "auditLog"
+  "users" | "customers" | "projects" | "invoices" | "auditLog" | "settings"
 >;
 
 function snapshot(): Persisted {
@@ -30,6 +30,7 @@ function snapshot(): Persisted {
     projects: db.projects,
     invoices: db.invoices,
     auditLog: db.auditLog,
+    settings: db.settings,
   };
 }
 
@@ -52,6 +53,7 @@ export function ensureHydrated(): void {
     replaceInPlace(db.projects, parsed.projects);
     replaceInPlace(db.invoices, parsed.invoices);
     replaceInPlace(db.auditLog, parsed.auditLog);
+    if (parsed.settings) Object.assign(db.settings, parsed.settings);
     logger.info("persistence.hydrated", { file: DATA_FILE });
   } catch (error) {
     logger.warn("persistence.hydrate_failed", { error: String(error) });

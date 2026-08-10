@@ -6,6 +6,7 @@ import {
   BarChart3,
   LineChart,
   ShieldCheck,
+  ScrollText,
   Settings,
   UserCircle,
   UsersRound,
@@ -82,6 +83,12 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/users",
         icon: UsersRound,
         permission: "users:manage",
+      },
+      {
+        label: "Audit log",
+        href: "/audit",
+        icon: ScrollText,
+        permission: "audit:view",
       },
       {
         label: "Settings",
