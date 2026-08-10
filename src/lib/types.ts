@@ -87,6 +87,7 @@ export type AuditAction =
   | "customer.create"
   | "customer.update"
   | "customer.delete"
+  | "user.role_change"
   | "access.denied";
 
 export type AuditSeverity = "info" | "warning" | "critical";

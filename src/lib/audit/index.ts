@@ -1,5 +1,6 @@
 import type { AuditAction, AuditLogEntry, AuditSeverity } from "@/lib/types";
 import { db } from "@/lib/mock/data";
+import { persist } from "@/lib/mock/persistence";
 import { generateId } from "@/lib/utils";
 import { logger } from "@/lib/observability/logger";
 
@@ -15,6 +16,7 @@ const DEFAULT_SEVERITY: Record<AuditAction, AuditSeverity> = {
   "customer.update": "info",
   "customer.delete": "warning",
   "project.delete": "warning",
+  "user.role_change": "warning",
   "access.denied": "critical",
 };
 
@@ -43,6 +45,7 @@ export function recordAudit(input: RecordAuditInput): AuditLogEntry {
     timestamp: new Date().toISOString(),
   };
   db.auditLog.unshift(entry);
+  persist();
   logger.info("audit", {
     action: entry.action,
     actor: entry.actorId,

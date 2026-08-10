@@ -11,6 +11,8 @@ const config: Config = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
+    "^server-only$": "<rootDir>/__mocks__/empty.js",
+    "^client-only$": "<rootDir>/__mocks__/empty.js",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   testPathIgnorePatterns: [

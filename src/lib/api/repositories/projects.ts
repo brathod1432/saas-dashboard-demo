@@ -1,5 +1,6 @@
 import type { ListQuery, Paginated, Project } from "@/lib/types";
 import { db } from "@/lib/mock/data";
+import { persist } from "@/lib/mock/persistence";
 import { generateId } from "@/lib/utils";
 import { applyQuery } from "./query";
 
@@ -22,6 +23,7 @@ export const projectsRepository = {
   create(input: Omit<Project, "id">): Project {
     const project: Project = { ...input, id: generateId("prj") };
     db.projects.unshift(project);
+    persist();
     return project;
   },
 
@@ -29,6 +31,7 @@ export const projectsRepository = {
     const project = db.projects.find((p) => p.id === id);
     if (!project) return undefined;
     Object.assign(project, patch);
+    persist();
     return project;
   },
 
@@ -36,6 +39,7 @@ export const projectsRepository = {
     const index = db.projects.findIndex((p) => p.id === id);
     if (index === -1) return false;
     db.projects.splice(index, 1);
+    persist();
     return true;
   },
 

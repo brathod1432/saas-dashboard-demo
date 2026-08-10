@@ -64,7 +64,9 @@ _This table is generated live in the app at **Settings → Access control**
   `POST /api/customers` returns **403** (service). Verified by
   `src/lib/api/services/__tests__/authorization.test.ts` and `e2e/rbac.spec.ts`.
 - A **Viewer** navigating to `/settings` is redirected to the dashboard (page gate).
-- Only **Admin** sees `users:manage` affordances.
+- Only **Admin** sees `users:manage` affordances — including the **Users & team** page
+  (`/users`), where admins change member roles. Role changes are audited (`user.role_change`),
+  cannot demote the last admin, and cannot change your own admin role (self-lockout guard).
 
 ## Extending
 

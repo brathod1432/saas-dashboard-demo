@@ -1,5 +1,6 @@
 import type { Invoice, ListQuery, Paginated } from "@/lib/types";
 import { db } from "@/lib/mock/data";
+import { persist } from "@/lib/mock/persistence";
 import { generateId } from "@/lib/utils";
 import { applyQuery } from "./query";
 
@@ -23,6 +24,7 @@ export const invoicesRepository = {
     const number = `INV-2026-${String(db.invoices.length + 1).padStart(4, "0")}`;
     const invoice: Invoice = { ...input, id: generateId("inv"), number };
     db.invoices.unshift(invoice);
+    persist();
     return invoice;
   },
 
@@ -30,6 +32,7 @@ export const invoicesRepository = {
     const invoice = db.invoices.find((i) => i.id === id);
     if (!invoice) return undefined;
     Object.assign(invoice, patch);
+    persist();
     return invoice;
   },
 

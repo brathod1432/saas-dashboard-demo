@@ -1,11 +1,34 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
+/**
+ * Content-Security-Policy.
+ *
+ * - `'unsafe-eval'` is only added in development (React refresh / better stack
+ *   traces need it); it is dropped in production.
+ * - `'unsafe-inline'` for scripts/styles remains because Next.js injects inline
+ *   bootstrap scripts and Radix/Recharts inject runtime inline styles. Moving to a
+ *   per-request nonce CSP (script `'strict-dynamic'`) is the documented next step —
+ *   it requires all pages to render dynamically. See docs/security-implementation.md.
+ */
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
 /**
  * Security headers applied to every response.
  * See docs/security-implementation.md for the rationale behind each header.
- *
- * Note: a Content-Security-Policy is intentionally kept in report-friendly form
- * here. In a real deployment prefer a per-request nonce-based CSP set in `proxy.ts`.
  */
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
@@ -20,22 +43,7 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      // Next.js requires inline styles/scripts for hydration in dev; tightened for prod via proxy nonce.
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
-      "font-src 'self' data:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-    ].join("; "),
-  },
+  { key: "Content-Security-Policy", value: csp },
 ];
 
 const nextConfig: NextConfig = {

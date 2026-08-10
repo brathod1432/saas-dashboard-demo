@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Settings,
   UserCircle,
+  UsersRound,
   LifeBuoy,
   Sparkles,
   type LucideIcon,
@@ -76,6 +77,12 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: "Administration",
     items: [
+      {
+        label: "Users",
+        href: "/users",
+        icon: UsersRound,
+        permission: "users:manage",
+      },
       {
         label: "Settings",
         href: "/settings",

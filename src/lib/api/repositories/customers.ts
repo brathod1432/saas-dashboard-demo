@@ -1,5 +1,6 @@
 import type { Customer, ListQuery, Paginated } from "@/lib/types";
 import { db } from "@/lib/mock/data";
+import { persist } from "@/lib/mock/persistence";
 import { generateId } from "@/lib/utils";
 import { applyQuery } from "./query";
 
@@ -22,6 +23,7 @@ export const customersRepository = {
       createdAt: new Date().toISOString(),
     };
     db.customers.unshift(customer);
+    persist();
     return customer;
   },
 
@@ -29,6 +31,7 @@ export const customersRepository = {
     const customer = db.customers.find((c) => c.id === id);
     if (!customer) return undefined;
     Object.assign(customer, patch);
+    persist();
     return customer;
   },
 
@@ -36,6 +39,7 @@ export const customersRepository = {
     const index = db.customers.findIndex((c) => c.id === id);
     if (index === -1) return false;
     db.customers.splice(index, 1);
+    persist();
     return true;
   },
 

@@ -22,6 +22,8 @@ starter template. Built to show how modern business software _should_ be built �
 - 🗂️ **Enterprise data tables** — sort, filter, search, paginate, bulk actions, column
   visibility, CSV export (with formula-injection protection), and per-row view/edit/delete.
 - ⌘ **Command palette (⌘K)** — global search across customers, projects, and invoices.
+- 👥 **User & team management** — admins assign roles from `/users` (audited, self-lockout &
+  last-admin guards); demo data **persists across restarts** (`.data/db.json`).
 - 🧱 **Clean architecture** — UI → hooks → clients → route handlers → services → repositories.
   Swap the mock backend for a real one by changing **two layers**.
 - 🔭 **Observable** — structured logging, metrics, tracing spans, health checks.
@@ -54,8 +56,11 @@ starter template. Built to show how modern business software _should_ be built �
     <td><strong>Analytics</strong><br/><img src="docs/screenshots/10-analytics.png" alt="Analytics" /></td>
   </tr>
   <tr>
+    <td><strong>Users &amp; team (role management)</strong><br/><img src="docs/screenshots/13-users.png" alt="Users & team" /></td>
     <td><strong>Settings — RBAC permission matrix</strong><br/><img src="docs/screenshots/11-settings-rbac.png" alt="Settings / RBAC" /></td>
-    <td><strong>Portfolio showcase (re-skins)</strong><br/><img src="docs/screenshots/12-showcase.png" alt="Showcase" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Portfolio showcase (re-skins)</strong><br/><img src="docs/screenshots/12-showcase.png" alt="Showcase" /></td>
   </tr>
   <tr>
     <td colspan="2"><strong>Landing page</strong><br/><img src="docs/screenshots/01-landing.png" alt="Landing" /></td>
@@ -102,8 +107,8 @@ e2e/            Playwright specs
 ## Status
 
 - ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
-- ✅ 60 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
-- Core-logic coverage ≈ 87% statements / 80% branches
+- ✅ 65 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
+- Core-logic coverage ≈ 87% statements / 79% branches
 
 See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).
 

@@ -47,9 +47,16 @@ Applied to every response via `headers()`:
   `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geo off),
   `Strict-Transport-Security` (HSTS, prod), and `poweredByHeader: false`.
 
-> **Hardening note:** the demo CSP allows `'unsafe-inline'`/`'unsafe-eval'` for dev ergonomics.
-> For production, move to a **per-request nonce CSP** set in `proxy.ts` and drop the unsafe
-> directives (tracked in [`security-audit.md`](./security-audit.md)).
+The CSP is **environment-aware** (`next.config.ts`): `'unsafe-eval'` is added **only in
+development** (React refresh needs it) and **dropped in production**. `'unsafe-inline'` remains
+for scripts (Next.js injects inline bootstrap scripts) and styles (Radix/Recharts inject runtime
+inline styles).
+
+> **Hardening note — next step:** a full **per-request nonce CSP** (`script-src 'strict-dynamic'`,
+> no `'unsafe-inline'`) in `proxy.ts` is the strongest option, but it forces **all pages to render
+> dynamically** and its production `style-src 'nonce-…'` conflicts with the runtime inline styles
+> that Radix/Recharts emit. It is deliberately deferred (tracked as S6b in
+> [`improvements.md`](./improvements.md) and [`security-audit.md`](./security-audit.md)).
 
 ## CSRF strategy — implemented
 

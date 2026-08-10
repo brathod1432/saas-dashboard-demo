@@ -16,6 +16,9 @@
 /test-results
 /.playwright
 
+# local mock-data persistence (demo)
+/.data
+
 # next.js
 /.next/
 /out/

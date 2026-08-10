@@ -40,6 +40,7 @@ async function main() {
     { path: "/invoices", name: "08-invoices", full: true },
     { path: "/reports", name: "09-reports", full: true },
     { path: "/analytics", name: "10-analytics", full: true },
+    { path: "/users", name: "13-users", full: true },
     { path: "/showcase", name: "12-showcase", full: true },
   ];
 
