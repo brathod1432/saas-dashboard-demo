@@ -56,4 +56,18 @@ export const customersService = {
     });
     return updated;
   },
+
+  remove(actor: Actor, id: string): { id: string } {
+    authorize(actor, "customers:delete");
+    const removed = customersRepository.remove(id);
+    if (!removed) throw Errors.notFound("Customer not found");
+    recordAudit({
+      action: "customer.delete",
+      actorId: actor.id,
+      actorName: actor.name,
+      target: id,
+      ip: actor.ip,
+    });
+    return { id };
+  },
 };

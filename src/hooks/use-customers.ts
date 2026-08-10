@@ -29,3 +29,28 @@ export function useCreateCustomer() {
     onError: (error: Error) => toast.error(error.message),
   });
 }
+
+export function useUpdateCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, patch }: { id: string; patch: Partial<Customer> }) =>
+      httpClient.patch<Customer>(`/customers/${id}`, patch),
+    onSuccess: (customer) => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success(`Customer "${customer.name}" updated`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useDeleteCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => httpClient.del<{ id: string }>(`/customers/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success("Customer deleted");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}

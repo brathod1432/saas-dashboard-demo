@@ -51,19 +51,27 @@ Applied to every response via `headers()`:
 > For production, move to a **per-request nonce CSP** set in `proxy.ts` and drop the unsafe
 > directives (tracked in [`security-audit.md`](./security-audit.md)).
 
-## CSRF strategy
+## CSRF strategy — implemented
 
 - Session cookie is **SameSite=Lax**, mitigating cross-site POSTs.
 - The browser client sends `credentials: 'same-origin'` only; API is same-origin.
 - CSP `form-action 'self'` blocks cross-origin form posts.
-- **Production recommendation:** add a double-submit CSRF token (or Origin/Sec-Fetch-Site
-  checks) for state-changing route handlers when cookies are used cross-context.
+- **`assertSameOrigin()`** (`src/lib/security/origin.ts`) rejects cross-site state-changing
+  requests using the Fetch Metadata `Sec-Fetch-Site` header (with an `Origin` host fallback).
+  It runs automatically for every authenticated mutation via `requireActor()`
+  (POST/PATCH/PUT/DELETE) and explicitly on `/api/auth/login`.
+- **Production recommendation:** additionally issue a double-submit CSRF token if you ever serve
+  the API cross-site or embed it in third-party contexts.
 
-## Rate limiting strategy
+## Rate limiting — implemented (auth)
 
-- Not enabled in the in-memory demo. Recommended design: a token-bucket keyed by IP + route in
-  `proxy.ts` (edge) backed by Redis/Upstash for auth and mutation endpoints, returning `429`
-  with `Retry-After`. Metrics counters (`http.request`/`http.error`) already provide the hook.
+- **`loginRateLimiter`** (`src/lib/security/rate-limit.ts`) throttles `/api/auth/login`:
+  **5 failures per 15 min per IP+email → 15-minute lockout** (HTTP `429`, generic message, and
+  an `access.denied` audit event). A successful login resets the counter.
+- Reusable `createRateLimiter({ max, windowMs, lockoutMs })` factory — apply to other sensitive
+  endpoints as needed.
+- **Production note:** the store is in-process (demo). Back it with Redis/Upstash (or an edge
+  limiter in `proxy.ts`) so limits hold across instances, and add a `Retry-After` header.
 
 ## Secrets management
 

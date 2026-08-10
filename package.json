@@ -2,6 +2,32 @@
   "name": "saas-dashboard-demo",
   "version": "0.1.0",
   "private": true,
+  "description": "Nexus Ops — an enterprise SaaS dashboard demo & reusable starter template (Next.js 16, React 19, TypeScript, Tailwind v4). Security-first, accessible, observable.",
+  "license": "MIT",
+  "author": "Brijesh Rathod <bgrathod00@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brathod1432/saas-dashboard-demo.git"
+  },
+  "homepage": "https://github.com/brathod1432/saas-dashboard-demo#readme",
+  "bugs": {
+    "url": "https://github.com/brathod1432/saas-dashboard-demo/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "saas",
+    "dashboard",
+    "starter-template",
+    "rbac",
+    "shadcn",
+    "enterprise"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

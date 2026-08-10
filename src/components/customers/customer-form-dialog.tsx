@@ -23,20 +23,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, SubmitButton } from "@/components/forms/field";
 import { CustomerCreateSchema, type CustomerCreateInput } from "@/lib/validation/schemas";
-import { useCreateCustomer } from "@/hooks/use-customers";
+import { useCreateCustomer, useUpdateCustomer } from "@/hooks/use-customers";
+import type { Customer } from "@/lib/types";
 
 const TIERS = ["enterprise", "business", "startup"] as const;
 const STATUSES = ["active", "prospect", "on_hold", "churned"] as const;
 
-export function CreateCustomerDialog({
+/**
+ * Create/edit customer dialog. Uncontrolled (with a trigger) for "New customer",
+ * or controlled (open/onOpenChange) with a `customer` for row-level editing.
+ */
+export function CustomerFormDialog({
+  mode = "create",
+  customer,
   trigger,
   openSignal,
+  open: controlledOpen,
+  onOpenChange,
 }: {
+  mode?: "create" | "edit";
+  customer?: Customer;
   trigger?: ReactNode;
   openSignal?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(Boolean(openSignal));
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(Boolean(openSignal));
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) =>
+    isControlled ? onOpenChange?.(value) : setInternalOpen(value);
+
   const createCustomer = useCreateCustomer();
+  const updateCustomer = useUpdateCustomer();
+  const isEdit = mode === "edit" && customer;
 
   const {
     register,
@@ -46,22 +66,43 @@ export function CreateCustomerDialog({
     formState: { errors },
   } = useForm<CustomerCreateInput>({
     resolver: zodResolver(CustomerCreateSchema),
-    defaultValues: { tier: "business", status: "prospect", mrr: 0 },
+    defaultValues: customer
+      ? {
+          name: customer.name,
+          contactName: customer.contactName,
+          email: customer.email,
+          phone: customer.phone,
+          industry: customer.industry,
+          tier: customer.tier,
+          status: customer.status === "churned" ? "churned" : customer.status,
+          mrr: customer.mrr,
+        }
+      : { tier: "business", status: "prospect", mrr: 0 },
   });
 
   async function onSubmit(values: CustomerCreateInput) {
-    await createCustomer.mutateAsync(values);
-    reset();
+    if (isEdit) {
+      await updateCustomer.mutateAsync({ id: customer!.id, patch: values });
+    } else {
+      await createCustomer.mutateAsync(values);
+      reset();
+    }
     setOpen(false);
   }
+
+  const pending = createCustomer.isPending || updateCustomer.isPending;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New customer</DialogTitle>
-          <DialogDescription>Add a customer to your workspace.</DialogDescription>
+          <DialogTitle>{isEdit ? "Edit customer" : "New customer"}</DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? "Update this customer's details."
+              : "Add a customer to your workspace."}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -141,8 +182,8 @@ export function CreateCustomerDialog({
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <SubmitButton loading={createCustomer.isPending}>
-              Create customer
+            <SubmitButton loading={pending}>
+              {isEdit ? "Save changes" : "Create customer"}
             </SubmitButton>
           </DialogFooter>
         </form>

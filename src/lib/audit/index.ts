@@ -13,6 +13,8 @@ const DEFAULT_SEVERITY: Record<AuditAction, AuditSeverity> = {
   "settings.change": "warning",
   "customer.create": "info",
   "customer.update": "info",
+  "customer.delete": "warning",
+  "project.delete": "warning",
   "access.denied": "critical",
 };
 

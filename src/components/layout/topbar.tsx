@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { Bell, LogOut, Menu, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -26,6 +25,7 @@ export function Topbar({ alerts }: { alerts: Alert[] }) {
   const user = useCurrentUser();
   const router = useRouter();
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
+  const setCommandOpen = useUiStore((s) => s.setCommandOpen);
 
   async function handleLogout() {
     await httpClient.post("/auth/logout", {});
@@ -46,15 +46,16 @@ export function Topbar({ alerts }: { alerts: Alert[] }) {
         <Menu className="h-5 w-5" />
       </Button>
 
-      <div className="relative hidden max-w-sm flex-1 md:block">
-        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-        <Input
-          type="search"
-          placeholder="Search customers, projects…"
-          aria-label="Global search"
-          className="pl-9"
-        />
-      </div>
+      <button
+        type="button"
+        onClick={() => setCommandOpen(true)}
+        aria-label="Open search (Command or Control + K)"
+        className="border-input bg-background text-muted-foreground hover:bg-accent hidden h-9 max-w-sm flex-1 items-center gap-2 rounded-md border px-3 text-sm transition-colors md:flex"
+      >
+        <Search className="h-4 w-4 shrink-0" />
+        <span className="flex-1 text-left">Search customers, projects…</span>
+        <kbd className="bg-muted rounded px-1.5 py-0.5 text-[10px] font-medium">⌘K</kbd>
+      </button>
 
       <div className="ml-auto flex items-center gap-1">
         <ThemeToggle />

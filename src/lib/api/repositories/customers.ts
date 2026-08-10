@@ -32,6 +32,13 @@ export const customersRepository = {
     return customer;
   },
 
+  remove(id: string): boolean {
+    const index = db.customers.findIndex((c) => c.id === id);
+    if (index === -1) return false;
+    db.customers.splice(index, 1);
+    return true;
+  },
+
   all(): Customer[] {
     return [...db.customers];
   },

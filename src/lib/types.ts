@@ -81,10 +81,12 @@ export type AuditAction =
   | "profile.update"
   | "project.update"
   | "project.create"
+  | "project.delete"
   | "invoice.create"
   | "settings.change"
   | "customer.create"
   | "customer.update"
+  | "customer.delete"
   | "access.denied";
 
 export type AuditSeverity = "info" | "warning" | "critical";

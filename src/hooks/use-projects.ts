@@ -41,3 +41,15 @@ export function useUpdateProject() {
     onError: (error: Error) => toast.error(error.message),
   });
 }
+
+export function useDeleteProject() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => httpClient.del<{ id: string }>(`/projects/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: KEY });
+      toast.success("Project deleted");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}

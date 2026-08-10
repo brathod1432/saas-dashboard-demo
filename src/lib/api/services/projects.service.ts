@@ -54,4 +54,18 @@ export const projectsService = {
     });
     return updated;
   },
+
+  remove(actor: Actor, id: string): { id: string } {
+    authorize(actor, "projects:delete");
+    const removed = projectsRepository.remove(id);
+    if (!removed) throw Errors.notFound("Project not found");
+    recordAudit({
+      action: "project.delete",
+      actorId: actor.id,
+      actorName: actor.name,
+      target: id,
+      ip: actor.ip,
+    });
+    return { id };
+  },
 };

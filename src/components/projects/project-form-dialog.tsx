@@ -23,22 +23,39 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, SubmitButton } from "@/components/forms/field";
 import { ProjectCreateSchema, type ProjectCreateInput } from "@/lib/validation/schemas";
-import { useCreateProject } from "@/hooks/use-projects";
+import { useCreateProject, useUpdateProject } from "@/hooks/use-projects";
 import { useCustomers } from "@/hooks/use-customers";
+import type { Project } from "@/lib/types";
 
 const STATUSES = ["planning", "active", "on_hold", "completed", "cancelled"] as const;
 const PRIORITIES = ["low", "medium", "high", "critical"] as const;
 
-export function CreateProjectDialog({
+/** Create/edit project dialog — uncontrolled (create) or controlled (edit). */
+export function ProjectFormDialog({
+  mode = "create",
+  project,
   trigger,
   openSignal,
+  open: controlledOpen,
+  onOpenChange,
 }: {
+  mode?: "create" | "edit";
+  project?: Project;
   trigger?: ReactNode;
   openSignal?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(Boolean(openSignal));
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(Boolean(openSignal));
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = (value: boolean) =>
+    isControlled ? onOpenChange?.(value) : setInternalOpen(value);
+
   const createProject = useCreateProject();
+  const updateProject = useUpdateProject();
   const { data: customers } = useCustomers();
+  const isEdit = mode === "edit" && project;
 
   const {
     register,
@@ -48,22 +65,41 @@ export function CreateProjectDialog({
     formState: { errors },
   } = useForm<ProjectCreateInput>({
     resolver: zodResolver(ProjectCreateSchema),
-    defaultValues: { status: "planning", priority: "medium", budget: 0 },
+    defaultValues: project
+      ? {
+          name: project.name,
+          customerId: project.customerId,
+          status: project.status,
+          priority: project.priority,
+          budget: project.budget,
+          dueDate: project.dueDate.slice(0, 10),
+        }
+      : { status: "planning", priority: "medium", budget: 0 },
   });
 
   async function onSubmit(values: ProjectCreateInput) {
-    await createProject.mutateAsync(values);
-    reset();
+    if (isEdit) {
+      await updateProject.mutateAsync({ id: project!.id, patch: values });
+    } else {
+      await createProject.mutateAsync(values);
+      reset();
+    }
     setOpen(false);
   }
+
+  const pending = createProject.isPending || updateProject.isPending;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New project</DialogTitle>
-          <DialogDescription>Create a project for a customer.</DialogDescription>
+          <DialogTitle>{isEdit ? "Edit project" : "New project"}</DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? "Update this project's details."
+              : "Create a project for a customer."}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -158,7 +194,9 @@ export function CreateProjectDialog({
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <SubmitButton loading={createProject.isPending}>Create project</SubmitButton>
+            <SubmitButton loading={pending}>
+              {isEdit ? "Save changes" : "Create project"}
+            </SubmitButton>
           </DialogFooter>
         </form>
       </DialogContent>

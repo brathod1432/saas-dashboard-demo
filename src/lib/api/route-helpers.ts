@@ -7,9 +7,15 @@ import type { Actor } from "@/lib/api/services/authorize";
 import type { ListQuery } from "@/lib/types";
 import { metrics } from "@/lib/observability/metrics";
 import { logger } from "@/lib/observability/logger";
+import { assertSameOrigin } from "@/lib/security/origin";
+
+const MUTATION_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 
 /** Resolve the authenticated actor from the request, or throw 401. */
 export async function requireActor(request: NextRequest): Promise<Actor> {
+  // Enforce same-origin on state-changing requests (CSRF defense in depth).
+  if (MUTATION_METHODS.has(request.method)) assertSameOrigin(request);
+
   const session = await getSession();
   if (!session) throw Errors.unauthorized();
   const user = findUserById(session.userId);

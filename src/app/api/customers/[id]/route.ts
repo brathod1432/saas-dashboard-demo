@@ -24,3 +24,14 @@ export async function PATCH(
     return NextResponse.json(customersService.update(actor, id, body));
   });
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return handle("customers.delete", async () => {
+    const actor = await requireActor(request);
+    const { id } = await params;
+    return NextResponse.json(customersService.remove(actor, id));
+  });
+}

@@ -7,6 +7,7 @@ import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import type { Alert, User } from "@/lib/types";
 import { DemoBanner } from "@/components/shared/demo-banner";
+import { CommandPalette } from "@/components/command-palette/command-palette";
 
 export function AppShell({
   user,
@@ -34,6 +35,7 @@ export function AppShell({
             </main>
           </div>
         </div>
+        <CommandPalette />
       </TooltipProvider>
     </SessionProvider>
   );

@@ -1,9 +1,11 @@
 import { customersService } from "@/lib/api/services/customers.service";
 import { invoicesService } from "@/lib/api/services/invoices.service";
+import { projectsService } from "@/lib/api/services/projects.service";
 import { ApiError } from "@/lib/api/errors";
 import type { Actor } from "@/lib/api/services/authorize";
 
 const admin: Actor = { id: "usr_admin", name: "Admin", role: "admin" };
+const manager: Actor = { id: "usr_manager", name: "Manager", role: "manager" };
 const viewer: Actor = { id: "usr_viewer", name: "Viewer", role: "viewer" };
 
 const customerInput = {
@@ -46,5 +48,26 @@ describe("service authorization (defense in depth)", () => {
     expect(() =>
       customersService.create(admin, { ...customerInput, email: "not-an-email" })
     ).toThrow(ApiError);
+  });
+
+  it("only admins can delete a customer (delete is admin-only)", () => {
+    // manager lacks customers:delete
+    expect(() => customersService.remove(manager, "cus_001")).toThrow(ApiError);
+    // admin can delete a freshly created customer
+    const created = customersService.create(admin, customerInput);
+    expect(customersService.remove(admin, created.id)).toEqual({ id: created.id });
+  });
+
+  it("only admins can delete a project", () => {
+    expect(() => projectsService.remove(manager, "prj_001")).toThrow(ApiError);
+    const created = projectsService.create(admin, {
+      name: "Temp Project",
+      customerId: "cus_001",
+      status: "planning",
+      priority: "low",
+      budget: 1000,
+      dueDate: "2026-12-31",
+    });
+    expect(projectsService.remove(admin, created.id)).toEqual({ id: created.id });
   });
 });

@@ -1,18 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus } from "lucide-react";
+import { MoreHorizontal, Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import type { Project } from "@/lib/types";
-import { useProjects } from "@/hooks/use-projects";
+import { useProjects, useDeleteProject } from "@/hooks/use-projects";
 import { useCustomers } from "@/hooks/use-customers";
 import { DataTable, type Column } from "@/components/data-table/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { ErrorState, TableSkeleton } from "@/components/shared/states";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Can } from "@/components/auth/can";
-import { CreateProjectDialog } from "./create-project-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Can, useCan } from "@/components/auth/can";
+import { ProjectFormDialog } from "./project-form-dialog";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 const STATUS_OPTIONS = [
@@ -28,6 +37,12 @@ export function ProjectsClient() {
   const params = useSearchParams();
   const { data, isLoading, isError, refetch } = useProjects();
   const { data: customers } = useCustomers();
+  const deleteProject = useDeleteProject();
+  const canEdit = useCan("projects:edit");
+  const canDelete = useCan("projects:delete");
+
+  const [editing, setEditing] = useState<Project | null>(null);
+  const [deleting, setDeleting] = useState<Project | null>(null);
 
   const customerName = (id: string) => customers?.find((c) => c.id === id)?.name ?? "—";
 
@@ -95,6 +110,49 @@ export function ProjectsClient() {
       exportValue: (p) => p.dueDate,
       cell: (p) => formatDate(p.dueDate),
     },
+    {
+      key: "actions",
+      header: "",
+      hideable: false,
+      className: "w-10 text-right",
+      cell: (project) => (
+        <div onClick={(e) => e.stopPropagation()} className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                aria-label={`Actions for ${project.name}`}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => router.push(`/projects/${project.id}`)}>
+                <Eye className="h-4 w-4" /> View
+              </DropdownMenuItem>
+              {canEdit && (
+                <DropdownMenuItem onClick={() => setEditing(project)}>
+                  <Pencil className="h-4 w-4" /> Edit
+                </DropdownMenuItem>
+              )}
+              {canDelete && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() => setDeleting(project)}
+                  >
+                    <Trash2 className="h-4 w-4" /> Delete
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -104,7 +162,8 @@ export function ProjectsClient() {
         description="Track delivery, budgets, and progress across accounts."
         actions={
           <Can permission="projects:create">
-            <CreateProjectDialog
+            <ProjectFormDialog
+              mode="create"
               openSignal={params.get("new") === "1"}
               trigger={
                 <Button>
@@ -118,7 +177,7 @@ export function ProjectsClient() {
       />
 
       {isLoading ? (
-        <TableSkeleton columns={7} />
+        <TableSkeleton columns={8} />
       ) : isError ? (
         <ErrorState onRetry={() => refetch()} />
       ) : (
@@ -140,6 +199,33 @@ export function ProjectsClient() {
           )}
         />
       )}
+
+      {editing && (
+        <ProjectFormDialog
+          key={editing.id}
+          mode="edit"
+          project={editing}
+          open={Boolean(editing)}
+          onOpenChange={(o) => !o && setEditing(null)}
+        />
+      )}
+
+      <ConfirmDialog
+        open={Boolean(deleting)}
+        onOpenChange={(o) => !o && setDeleting(null)}
+        title="Delete project?"
+        description={
+          deleting
+            ? `This permanently removes "${deleting.name}" and cannot be undone.`
+            : undefined
+        }
+        confirmLabel="Delete"
+        loading={deleteProject.isPending}
+        onConfirm={() => {
+          if (!deleting) return;
+          deleteProject.mutate(deleting.id, { onSuccess: () => setDeleting(null) });
+        }}
+      />
     </div>
   );
 }

@@ -32,6 +32,13 @@ export const projectsRepository = {
     return project;
   },
 
+  remove(id: string): boolean {
+    const index = db.projects.findIndex((p) => p.id === id);
+    if (index === -1) return false;
+    db.projects.splice(index, 1);
+    return true;
+  },
+
   all(): Project[] {
     return [...db.projects];
   },

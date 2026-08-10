@@ -1,5 +1,10 @@
 # Nexus Ops — Enterprise SaaS Dashboard Demo & Starter
 
+[![CI](https://github.com/brathod1432/saas-dashboard-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/brathod1432/saas-dashboard-demo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](https://www.typescriptlang.org)
+
 A production-quality **Business Operations Platform** demo that doubles as a reusable SaaS
 starter template. Built to show how modern business software _should_ be built —
 **security-first, accessible, observable, and production-ready** — not just how it can look.
@@ -15,7 +20,8 @@ starter template. Built to show how modern business software _should_ be built �
   automated jest-axe + Playwright checks.
 - 📈 **Real dashboards** — KPIs, revenue/user/channel charts (Recharts), activity, alerts.
 - 🗂️ **Enterprise data tables** — sort, filter, search, paginate, bulk actions, column
-  visibility, CSV export (with formula-injection protection).
+  visibility, CSV export (with formula-injection protection), and per-row view/edit/delete.
+- ⌘ **Command palette (⌘K)** — global search across customers, projects, and invoices.
 - 🧱 **Clean architecture** — UI → hooks → clients → route handlers → services → repositories.
   Swap the mock backend for a real one by changing **two layers**.
 - 🔭 **Observable** — structured logging, metrics, tracing spans, health checks.
@@ -96,32 +102,40 @@ e2e/            Playwright specs
 ## Status
 
 - ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
-- ✅ 45 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
-- Core-logic coverage ≈ 84% statements / 82% branches
+- ✅ 51 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
+- Core-logic coverage ≈ 87% statements / 81% branches
 
 See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).
 
 ## Documentation
 
-| Doc                                                                                                                                    |                                  |
-| -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [Discovery](docs/discovery.md)                                                                                                         | Vision, personas, roadmap, risks |
-| [Architecture](docs/architecture.md)                                                                                                   | Layered design & data flow       |
-| [Design system](docs/design-system.md)                                                                                                 | Tokens, components, patterns     |
-| [Design research](docs/design-research.md)                                                                                             | Vetted design sources            |
-| [Security model](docs/security-model.md)                                                                                               | Trust boundaries & STRIDE        |
-| [Security implementation](docs/security-implementation.md)                                                                             | Concrete controls                |
-| [Security review](docs/security-review.md)                                                                                             | Dependency vetting               |
-| [Security audit](docs/security-audit.md)                                                                                               | Findings & risk score            |
-| [RBAC](docs/rbac.md)                                                                                                                   | Roles, matrix, enforcement       |
-| [Observability](docs/observability.md)                                                                                                 | Logs, metrics, tracing, health   |
-| [Testing](docs/testing.md)                                                                                                             | Strategy & how to run            |
-| [Accessibility](docs/accessibility.md)                                                                                                 | WCAG AA approach                 |
-| [Performance](docs/performance.md)                                                                                                     | Budgets & techniques             |
-| [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Customization](docs/customization.md) · [Roadmap](docs/future-roadmap.md) | Operate & extend                 |
+| Doc                                                                                                                                    |                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| [Discovery](docs/discovery.md)                                                                                                         | Vision, personas, roadmap, risks   |
+| [Improvements](docs/improvements.md)                                                                                                   | User + security improvement report |
+| [Architecture](docs/architecture.md)                                                                                                   | Layered design & data flow         |
+| [Design system](docs/design-system.md)                                                                                                 | Tokens, components, patterns       |
+| [Design research](docs/design-research.md)                                                                                             | Vetted design sources              |
+| [Security model](docs/security-model.md)                                                                                               | Trust boundaries & STRIDE          |
+| [Security implementation](docs/security-implementation.md)                                                                             | Concrete controls                  |
+| [Security review](docs/security-review.md)                                                                                             | Dependency vetting                 |
+| [Security audit](docs/security-audit.md)                                                                                               | Findings & risk score              |
+| [RBAC](docs/rbac.md)                                                                                                                   | Roles, matrix, enforcement         |
+| [Observability](docs/observability.md)                                                                                                 | Logs, metrics, tracing, health     |
+| [Testing](docs/testing.md)                                                                                                             | Strategy & how to run              |
+| [Accessibility](docs/accessibility.md)                                                                                                 | WCAG AA approach                   |
+| [Performance](docs/performance.md)                                                                                                     | Budgets & techniques               |
+| [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Customization](docs/customization.md) · [Roadmap](docs/future-roadmap.md) | Operate & extend                   |
 
-## License & disclaimer
+## Contributing & security
 
-Demonstration/starter project. Authentication and data are simulated — **not** production
-security. Review [`docs/security-model.md`](docs/security-model.md) before adapting for
-production.
+- Contribution guide: [`CONTRIBUTING.md`](CONTRIBUTING.md) · Code of Conduct: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)
+- Report vulnerabilities privately: [`SECURITY.md`](SECURITY.md)
+
+## License
+
+Licensed under the [MIT License](LICENSE) © 2026 Brijesh Rathod.
+
+**Disclaimer:** this is a demonstration/starter project. Authentication and data are
+simulated — **not** production security. Review [`docs/security-model.md`](docs/security-model.md)
+before adapting for production.
