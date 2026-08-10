@@ -21,6 +21,41 @@ starter template. Built to show how modern business software _should_ be built �
 - 🔭 **Observable** — structured logging, metrics, tracing spans, health checks.
 - 🎨 **Re-skinnable** — `/showcase` re-themes the starter into 8 verticals.
 
+## Screenshots
+
+> Captured from the running app. Full set in [`docs/screenshots/`](docs/screenshots).
+> Regenerate anytime with `node scripts/capture-screenshots.mjs` (app running).
+
+### Dashboard — KPIs, charts, activity, alerts, audit trail
+
+![Dashboard](docs/screenshots/03-dashboard.png)
+
+<table>
+  <tr>
+    <td width="50%"><strong>Dashboard — dark mode</strong><br/><img src="docs/screenshots/04-dashboard-dark.png" alt="Dashboard (dark)" /></td>
+    <td width="50%"><strong>Sign in (with quick demo roles)</strong><br/><img src="docs/screenshots/02-login.png" alt="Login" /></td>
+  </tr>
+  <tr>
+    <td><strong>Customers — enterprise data table</strong><br/><img src="docs/screenshots/05-customers.png" alt="Customers" /></td>
+    <td><strong>Customer detail</strong><br/><img src="docs/screenshots/06-customer-detail.png" alt="Customer detail" /></td>
+  </tr>
+  <tr>
+    <td><strong>Projects</strong><br/><img src="docs/screenshots/07-projects.png" alt="Projects" /></td>
+    <td><strong>Invoices</strong><br/><img src="docs/screenshots/08-invoices.png" alt="Invoices" /></td>
+  </tr>
+  <tr>
+    <td><strong>Reports</strong><br/><img src="docs/screenshots/09-reports.png" alt="Reports" /></td>
+    <td><strong>Analytics</strong><br/><img src="docs/screenshots/10-analytics.png" alt="Analytics" /></td>
+  </tr>
+  <tr>
+    <td><strong>Settings — RBAC permission matrix</strong><br/><img src="docs/screenshots/11-settings-rbac.png" alt="Settings / RBAC" /></td>
+    <td><strong>Portfolio showcase (re-skins)</strong><br/><img src="docs/screenshots/12-showcase.png" alt="Showcase" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>Landing page</strong><br/><img src="docs/screenshots/01-landing.png" alt="Landing" /></td>
+  </tr>
+</table>
+
 ## Tech stack
 
 Next.js 16 (App Router · RSC · Turbopack) · React 19 · TypeScript (strict) · Tailwind CSS v4 ·
