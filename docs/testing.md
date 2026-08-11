@@ -1,7 +1,7 @@
 # Phase 19 — Testing
 
 > Strategy, tooling, and how to run everything. Current status: **71 Jest tests** and
-> **55 Playwright E2E tests** (per browser) passing; core-logic coverage ≈ **87% statements /
+> **59 Playwright E2E tests** (per browser) passing; core-logic coverage ≈ **87% statements /
 > 79% branches**.
 
 ## Test pyramid
@@ -42,7 +42,7 @@ webkit; local run reuses a running server, CI builds & starts).
 
 ## What's covered (Playwright — `e2e/`)
 
-55 tests per browser across the whole product. Helpers live in `e2e/helpers.ts` (login,
+59 tests per browser across the whole product. Helpers live in `e2e/helpers.ts` (login,
 unique data, row-action + toast utilities).
 
 - `auth.spec.ts` — landing, unauth redirect (`/login?next=`), quick login, credential login +
@@ -60,15 +60,16 @@ unique data, row-action + toast utilities).
   breadcrumbs.
 - `insights.spec.ts` — invoices list + search, reports period selector (`?period=3` re-slice),
   analytics renders.
-- `command-palette.spec.ts` — ⌘K open + navigate to a customer; topbar-button open + empty state.
+- `command-palette.spec.ts` — ⌘K open + entity navigate; topbar-button open + empty state;
+  jump-to-page; quick-create action opens the dialog; permission-aware nav (viewer has no Users).
 - `notifications.spec.ts` — mark-all-read clears the unread badge; dismiss removes an alert.
 - `users.spec.ts` — admin changes a member's role; self-lockout guard; non-admins redirected.
 - `settings-account.spec.ts` — admin saves org settings; access-matrix/audit tabs; manager
   read-only notice; account profile update.
 - `audit.spec.ts` — search, severity filter, CSV export; viewer redirected.
 - `navigation.spec.ts` — every sidebar route, landmarks + skip link, theme persists on reload.
-- `security.spec.ts` — security headers, `no-store` on authed APIs, login rate-limit `429` +
-  `Retry-After`, cross-site (CSRF) mutation blocked `403`.
+- `security.spec.ts` — security headers (incl. COOP/CORP/cross-domain), `no-store` on authed
+  APIs, login rate-limit `429` + `Retry-After`, cross-site login + logout blocked `403` (CSRF).
 
 > **Browser support:** the suite passes on **Chromium** and **Firefox** locally and in CI.
 > **WebKit** is included in the config and runs in Linux CI; on some Windows hosts the WebKit

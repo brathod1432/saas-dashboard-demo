@@ -46,6 +46,9 @@ Applied to every response via `headers()`:
 - `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
   `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geo off),
   `Strict-Transport-Security` (HSTS, prod), and `poweredByHeader: false`.
+- **Cross-origin isolation:** `Cross-Origin-Opener-Policy: same-origin`,
+  `Cross-Origin-Resource-Policy: same-origin`, and `X-Permitted-Cross-Domain-Policies: none`
+  (mitigate XS-Leaks and cross-origin resource abuse; the app is fully same-origin).
 
 The CSP is **environment-aware** (`next.config.ts`): `'unsafe-eval'` is added **only in
 development** (React refresh needs it) and **dropped in production**. `'unsafe-inline'` remains
@@ -66,7 +69,8 @@ inline styles).
 - **`assertSameOrigin()`** (`src/lib/security/origin.ts`) rejects cross-site state-changing
   requests using the Fetch Metadata `Sec-Fetch-Site` header (with an `Origin` host fallback).
   It runs automatically for every authenticated mutation via `requireActor()`
-  (POST/PATCH/PUT/DELETE) and explicitly on `/api/auth/login`.
+  (POST/PATCH/PUT/DELETE) and explicitly on `/api/auth/login` and `/api/auth/logout`
+  (preventing forced cross-site sign-out / logout-CSRF).
 - **Production recommendation:** additionally issue a double-submit CSRF token if you ever serve
   the API cross-site or embed it in third-party contexts.
 

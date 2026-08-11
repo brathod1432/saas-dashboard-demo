@@ -4,9 +4,12 @@ import { getSession } from "@/lib/auth/server";
 import { SESSION_COOKIE_NAME } from "@/lib/auth/session";
 import { recordAudit } from "@/lib/audit";
 import { handle } from "@/lib/api/route-helpers";
+import { assertSameOrigin } from "@/lib/security/origin";
 
 export async function POST(request: NextRequest) {
   return handle("auth.logout", async () => {
+    // Block cross-site logout (logout-CSRF); cookie is SameSite=Lax too.
+    assertSameOrigin(request);
     const session = await getSession();
     const store = await cookies();
     store.delete(SESSION_COOKIE_NAME);

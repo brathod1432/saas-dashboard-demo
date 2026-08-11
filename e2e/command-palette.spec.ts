@@ -26,4 +26,36 @@ test.describe("global command palette (⌘K)", () => {
     await page.keyboard.press("Escape");
     await expect(page.getByLabel("Command palette search")).toHaveCount(0);
   });
+
+  test("jump-to-page navigation works", async ({ page }) => {
+    await loginAs(page, "Admin");
+    await page.keyboard.press("ControlOrMeta+k");
+    await page.getByLabel("Command palette search").fill("Audit");
+    await page
+      .getByRole("option", { name: /audit log/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/audit$/);
+  });
+
+  test("quick-create action opens the new-customer dialog", async ({ page }) => {
+    await loginAs(page, "Admin");
+    await page.keyboard.press("ControlOrMeta+k");
+    await page.getByLabel("Command palette search").fill("New customer");
+    await page
+      .getByRole("option", { name: /new customer/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/customers\?new=1/);
+    await expect(page.getByRole("dialog")).toBeVisible();
+  });
+
+  test("navigation commands respect permissions (viewer has no Users)", async ({
+    page,
+  }) => {
+    await loginAs(page, "Viewer");
+    await page.keyboard.press("ControlOrMeta+k");
+    await page.getByLabel("Command palette search").fill("Users");
+    await expect(page.getByRole("option", { name: /^Users/ })).toHaveCount(0);
+  });
 });

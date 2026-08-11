@@ -34,7 +34,7 @@ the global **search box didn't work**; data **reset on refresh**; and there were
 | U9  | **Date-range/period selector** on reports                                               | "This quarter vs last" is a core analytics need                                                | ✅ Implemented (reports: 3/6/12 months)                          |
 | U10 | **CSV import** (not just export)                                                        | Onboarding real data is import-first                                                           | ✅ Implemented (customers, with template)                        |
 | U11 | **User & team management UI** (assign roles)                                            | Admins need to run RBAC without editing code                                                   | ✅ Implemented (`/users`, role changes, audited)                 |
-| U12 | **Keyboard shortcuts + focus-visible affordances**                                      | Speed for power users                                                                          | Partial (⌘K added)                                               |
+| U12 | **Keyboard command launcher** (search + jump-to-page + quick-create, permission-aware)  | Speed for power users                                                                          | ✅ Implemented (⌘K)                                              |
 
 ## 2. Trust, correctness & polish
 
@@ -68,6 +68,8 @@ the global **search box didn't work**; data **reset on refresh**; and there were
 | S12 | **Production guard for default `SESSION_SECRET`**                                          | Shipping the demo signing key            | ✅ Implemented (startup warning)                                                            |
 | S13 | **`Retry-After` header on rate-limited (429) logins**                                      | Well-behaved back-off / client guidance  | ✅ Implemented                                                                              |
 | S14 | **Exportable audit trail UI** (`/audit`, RBAC-gated)                                       | Compliance/forensics visibility          | ✅ Implemented                                                                              |
+| S15 | **Cross-origin isolation headers** (COOP, CORP, `X-Permitted-Cross-Domain-Policies`)       | XS-Leaks / cross-origin resource abuse   | ✅ Implemented                                                                              |
+| S16 | **Same-origin guard on logout** (logout-CSRF)                                              | Forced cross-site sign-out               | ✅ Implemented                                                                              |
 
 ## 4. Developer & adopter experience (client/consultant using the starter)
 
@@ -88,8 +90,10 @@ the global **search box didn't work**; data **reset on refresh**; and there were
   T4 (breadcrumbs), T5 (notification center), S11 (no-store), S12 (secret guard).
 - **Iteration 3:** U4 (persistence across restarts), U11 (user management UI),
   S6 (env-aware CSP: drop `unsafe-eval` in prod).
-- **Iteration 4 (this round):** T7 (Account & Settings persist for real), T8/S14 (dedicated
+- **Iteration 4:** T7 (Account & Settings persist for real), T8/S14 (dedicated
   Audit Log page with filter + CSV export), S13 (`Retry-After` on 429).
+- **Iteration 5 (this round):** U12 (⌘K command launcher: jump-to-page + quick-create),
+  S15 (COOP/CORP/cross-domain headers), S16 (logout-CSRF guard).
 - **Next (biggest remaining lift):** real database (replace file store), U8 (server-side tables),
   S6b (full nonce CSP), S7 (real auth/MFA), U7 (saved views), T2 (optimistic updates),
   i18n, Storybook, Lighthouse/axe CI.

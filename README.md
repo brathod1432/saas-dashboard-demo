@@ -21,7 +21,8 @@ starter template. Built to show how modern business software _should_ be built �
 - 📈 **Real dashboards** — KPIs, revenue/user/channel charts (Recharts), activity, alerts.
 - 🗂️ **Enterprise data tables** — sort, filter, search, paginate, bulk actions, column
   visibility, CSV export (with formula-injection protection), and per-row view/edit/delete.
-- ⌘ **Command palette (⌘K)** — global search across customers, projects, and invoices.
+- ⌘ **Command palette (⌘K)** — a launcher: fuzzy search customers/projects/invoices, jump to any
+  page, and quick-create — all permission-aware.
 - 👥 **User & team management** — admins assign roles from `/users` (audited, self-lockout &
   last-admin guards); demo data **persists across restarts** (`.data/db.json`).
 - 🧾 **Exportable audit log** — dedicated `/audit` page with search, severity filter, and CSV
@@ -112,7 +113,7 @@ e2e/            Playwright specs
 ## Status
 
 - ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
-- ✅ 71 Jest tests · ✅ 55 Playwright E2E tests (Chromium + Firefox green) · ✅ `npm audit`: 0 vulnerabilities
+- ✅ 71 Jest tests · ✅ 59 Playwright E2E tests (Chromium + Firefox green) · ✅ `npm audit`: 0 vulnerabilities
 - Core-logic coverage ≈ 87% statements / 79% branches
 
 See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).

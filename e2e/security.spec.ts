@@ -8,6 +8,17 @@ test.describe("security controls", () => {
     expect(headers["x-frame-options"]).toBe("DENY");
     expect(headers["x-content-type-options"]).toBe("nosniff");
     expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    // Cross-origin isolation hardening.
+    expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
+    expect(headers["cross-origin-resource-policy"]).toBe("same-origin");
+    expect(headers["x-permitted-cross-domain-policies"]).toBe("none");
+  });
+
+  test("cross-site logout is blocked (logout-CSRF)", async ({ request }) => {
+    const res = await request.post("/api/auth/logout", {
+      headers: { "sec-fetch-site": "cross-site" },
+    });
+    expect(res.status()).toBe(403);
   });
 
   test("authenticated API responses are marked no-store", async ({ request }) => {
