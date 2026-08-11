@@ -112,7 +112,7 @@ e2e/            Playwright specs
 ## Status
 
 - ✅ Production build passes · ✅ ESLint clean · ✅ `tsc` clean
-- ✅ 71 Jest tests · ✅ 12 Playwright E2E tests · ✅ `npm audit`: 0 vulnerabilities
+- ✅ 71 Jest tests · ✅ 55 Playwright E2E tests (Chromium + Firefox green) · ✅ `npm audit`: 0 vulnerabilities
 - Core-logic coverage ≈ 87% statements / 79% branches
 
 See the full assessment in [`docs/final-audit.md`](docs/final-audit.md).

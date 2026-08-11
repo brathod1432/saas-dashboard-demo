@@ -1,17 +1,18 @@
 # Phase 19 — Testing
 
-> Strategy, tooling, and how to run everything. Current status: **45 Jest tests** and
-> **12 Playwright E2E tests** passing; core-logic coverage ≈ **84% statements / 82% branches**.
+> Strategy, tooling, and how to run everything. Current status: **71 Jest tests** and
+> **55 Playwright E2E tests** (per browser) passing; core-logic coverage ≈ **87% statements /
+> 79% branches**.
 
 ## Test pyramid
 
-| Layer         | Tool                                 | Scope                                                                                 |
-| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------- |
-| Unit          | Jest                                 | RBAC, session signing, query engine, validation schemas, utils, service authorization |
-| Component     | Jest + React Testing Library         | Button, `<Can>` gate, DataTable, state components                                     |
-| Accessibility | jest-axe (unit) + Playwright (flows) | Zero-violation assertions on key components                                           |
-| Integration   | Jest (services)                      | Authorization + validation across service→repository                                  |
-| E2E           | Playwright                           | Auth flow, protected routing, RBAC visibility, dashboard/data flows, theme            |
+| Layer         | Tool                                 | Scope                                                                                                       |
+| ------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Unit          | Jest                                 | RBAC, session signing, query engine, validation schemas, utils, service authorization                       |
+| Component     | Jest + React Testing Library         | Button, `<Can>` gate, DataTable, state components                                                           |
+| Accessibility | jest-axe (unit) + Playwright (flows) | Zero-violation assertions on key components                                                                 |
+| Integration   | Jest (services)                      | Authorization + validation across service→repository                                                        |
+| E2E           | Playwright                           | Every feature end-to-end: auth, RBAC, CRUD, bulk, import, search, palette, users, settings, audit, security |
 
 ## Running
 
@@ -41,12 +42,37 @@ webkit; local run reuses a running server, CI builds & starts).
 
 ## What's covered (Playwright — `e2e/`)
 
+55 tests per browser across the whole product. Helpers live in `e2e/helpers.ts` (login,
+unique data, row-action + toast utilities).
+
 - `auth.spec.ts` — landing, unauth redirect (`/login?next=`), quick login, credential login +
   logout, invalid-credential toast.
+- `auth-forms.spec.ts` — login inline validation, register (empty errors, password-mismatch,
+  simulated success → `/login`), forgot-password confirmation state.
 - `rbac.spec.ts` — viewer hides create actions & Settings nav; admin sees them; viewer
   redirected from `/settings`.
-- `dashboard.spec.ts` — KPIs/charts/activity render, table search+pagination, create-customer
-  dialog, theme toggle → `.dark`.
+- `dashboard.spec.ts` — KPIs/charts/activity render, table search+pagination, create dialog,
+  theme toggle → `.dark`.
+- `customers.spec.ts` — search, status filter, sort (asc/desc), column visibility, pagination,
+  CSV export (download), create, edit + delete (row actions + confirm), bulk status change, CSV
+  import (valid/invalid preview), row → detail with breadcrumbs.
+- `projects.spec.ts` — create (with customer select), edit, delete, bulk delete, detail
+  breadcrumbs.
+- `insights.spec.ts` — invoices list + search, reports period selector (`?period=3` re-slice),
+  analytics renders.
+- `command-palette.spec.ts` — ⌘K open + navigate to a customer; topbar-button open + empty state.
+- `notifications.spec.ts` — mark-all-read clears the unread badge; dismiss removes an alert.
+- `users.spec.ts` — admin changes a member's role; self-lockout guard; non-admins redirected.
+- `settings-account.spec.ts` — admin saves org settings; access-matrix/audit tabs; manager
+  read-only notice; account profile update.
+- `audit.spec.ts` — search, severity filter, CSV export; viewer redirected.
+- `navigation.spec.ts` — every sidebar route, landmarks + skip link, theme persists on reload.
+- `security.spec.ts` — security headers, `no-store` on authed APIs, login rate-limit `429` +
+  `Retry-After`, cross-site (CSRF) mutation blocked `403`.
+
+> **Browser support:** the suite passes on **Chromium** and **Firefox** locally and in CI.
+> **WebKit** is included in the config and runs in Linux CI; on some Windows hosts the WebKit
+> build is slow/unstable to launch, so validate WebKit in CI or on macOS.
 
 ## Coverage policy
 

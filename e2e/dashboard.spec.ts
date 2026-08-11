@@ -38,7 +38,12 @@ test.describe("dashboard & data flows", () => {
     await page.getByLabel("Phone").fill("15551234567");
     await page.getByLabel("MRR (USD)").fill("5000");
     await page.getByRole("button", { name: /create customer/i }).click();
-    await expect(page.getByText(/created/i)).toBeVisible();
+    await expect(
+      page
+        .locator("[data-sonner-toast]")
+        .filter({ hasText: /created/i })
+        .first()
+    ).toBeVisible();
   });
 
   test("theme toggle switches to dark mode", async ({ page }) => {
